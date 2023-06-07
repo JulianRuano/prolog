@@ -19,6 +19,8 @@ producto(choclitos,mecato,6500).
 producto(jumbo,mecato,1500).
 producto('jabon rey',aseo,3000).
 producto(escoba,aseo,4000).
+producto(chocoramo,mecato,2000).
+producto('galletas festival',mecato,1500).
 
 
 %Hechos sucursal(nombre,direccion)
@@ -31,7 +33,7 @@ compra(maria,[camisa,nike,choclitos],centro).
 compra(ana,[pantalon,tenis,jumbo],norte).
 compra(juan,[camisa,tenis,'jabon rey'],sur).
 compra(pedro,[pantalon,nike,escoba],centro).
-compra(maria,[jumbo,tenis,choclitos],norte).
+compra(maria,['jabon rey',tenis,choclitos],norte).
 compra(ana,[pantalon,nike,jumbo],sur).
 
 %Reglas 
@@ -43,65 +45,87 @@ imprimir([X|Y]):- write(X),nl,imprimir(Y).
 calcularPrecioTotal([], 0).
 calcularPrecioTotal([Producto|Productos], PrecioTotal) :-
     producto(Producto, _, Precio),
-    calcularPrecioTotal(Productos, PrecioRestante),
-    PrecioTotal is Precio + PrecioRestante.
+    calcularPrecioTotal(Productos, PrecioRestante),  
+    PrecioTotal is Precio + PrecioRestante. 
 
 %2) Regla para calcular el precio total de una compra:
-calcularPrecioCompra(Cliente) :- calcularPrecio(Cliente,ListaPrecios),imprimir(ListaPrecios).
+calcularPrecioCompra(Cliente) :- calcularPrecio(Cliente,ListaPrecios),imprimir(ListaPrecios). 
 
 calcularPrecio(Cliente, ListaPrecios) :- 
         findall(PrecioTotal,
         (compra(Cliente, Productos, _),calcularPrecioTotal(Productos, PrecioTotal))
-        ,ListaPrecios).
+        ,ListaPrecios).   %Obtenemos una lista con los precios totales de cada compra
 
 %3) Regla para calcular las ganancias de cada una de las sucursales:
-calcularGananciasSucursal(Sucursal, Ganancias) :-                    %Calculamos las ganancias de una sucursal
-    findall(PrecioTotal,                                             %Obtenemos una lista con los precios totales de cada compra
+calcularGananciasSucursal(Sucursal, Ganancias) :-     
+    findall(PrecioTotal,                                
         (compra(_, Productos, Sucursal), calcularPrecioTotal(Productos, PrecioTotal)),
-        ListaPrecios),
-    sum_list(ListaPrecios, Ganancias).                               %Sumamos los precios totales de cada compra
+        ListaPrecios),      %Obtenemos una lista con los precios totales de cada compra
+    sum_list(ListaPrecios, Ganancias).    %Sumamos los precios totales de cada compra
 
 calcularGananciasTotales() :- calcularGanancias(Sucursales),imprimir(Sucursales).
 
 calcularGanancias(Sucursales) :- 
         findall(Ganancias,
         (sucursal(Sucursal, _),calcularGananciasSucursal(Sucursal, Ganancias))
-        ,Sucursales).                                               %Obtenemos una lista con las ganancias de cada sucursal
+        ,Sucursales).     %Obtenemos una lista con las ganancias de cada sucursal
 
 
 %4) Regla para calcular el precio total de una categoria:
-calcularPrecioCategoria(Categoria, PrecioTotal) :-                   %Calculamos el precio total de una categoria
-    findall(Precio,                                                  %Obtenemos una lista con los precios de cada producto de la categoria
+calcularPrecioCategoria(Categoria, PrecioTotal) :-        
+    findall(Precio,                        
         (producto(_, Categoria, Precio)),
-        ListaPrecios),
-    sum_list(ListaPrecios, PrecioTotal).                             %Sumamos los precios de cada producto de la categoria
+        ListaPrecios),               %Obtenemos una lista con los precios de cada producto de la categoria
+    sum_list(ListaPrecios, PrecioTotal).   %Sumamos los precios de cada producto de la categoria
 
 
 %5) Que productos prefieren las mujeres:
 productoPreferidoMujeres() :-  listaProductoMujeres(ListaProductos),imprimir(ListaProductos).
 
-listaProductoMujeres(ListaProductos) :-                              %Calculamos los productos comprados por mujeres
-    findall(Producto,                                                %Obtenemos una lista con los productos comprados por mujeres
+listaProductoMujeres(ListaProductos) :-  %Calculamos los productos comprados por mujeres
+    findall(Producto,                    %Obtenemos una lista con los productos comprados por mujeres
         (compra(Cliente, Productos, _), mujer(Cliente), member(Producto, Productos)),
         ListaProductos).
 
-    %Determinar si un cliente ha comprado un producto específico
+%6) Determinar si un cliente ha comprado un producto específico
 compra_cliente(Cliente, Productos, Sucursal) :-
-    compra(Cliente, Productos, Sucursal).
+    compra(Cliente, Productos, Sucursal).  %Es verdadero si el cliente ha comprado los productos en la sucursal
 
 compro(Cliente, Producto) :-
     compra_cliente(Cliente, Productos, _),
-    member(Producto, Productos).
+    member(Producto, Productos).   %Es verdadero si el producto es miembro de la lista de productos comprados por el cliente
 
-%9 explicar forall Determinar si un cliente ha comprado al menos un producto de cada categoría
+%7) Determinar si un cliente ha comprado al menos un producto de cada categoría
+% El forall es verdadero si el predicado es verdadero para todos los valores de la lista forall(Condicion, Predicado)
+
 compro_todas_categorias(Cliente) :-
     forall(categoria(Categoria), (compro(Cliente, Producto), producto(Producto, Categoria, _))).
 
-    %12 Obtener una lista de productos comprados en una categoría específica por un cliente
+%8) Obtener una lista de productos comprados en una categoría específica por un cliente
     productos_categoria(Cliente, Categoria, ListaProductos) :-
-    findall(Producto, (compro(Cliente, Producto), producto(Producto, Categoria, _)), ListaProductos).
+    findall(Producto, 
+    (compro(Cliente, Producto), producto(Producto, Categoria, _)), 
+    ListaProductos).     %Obtenemos una lista con los productos comprados por el cliente en la categoria
 
-    %hacer con el imprimir 13) Calcular el total gastado por un cliente en una categoría específica
-total_categoria(Cliente, Categoria, Total) :-
+%9) Calcular el total gastado por un cliente en una categoría específica
+total_categoria(Cliente, Categoria, Total) :- 
     productos_categoria(Cliente, Categoria, ListaProductos),
-    total_productos(ListaProductos, Total).
+    total_productos(ListaProductos, Total). 
+
+total_productos([], 0).                
+total_productos([Producto|Productos], Total) :-
+    producto(Producto, _, Precio),
+    total_productos(Productos, TotalRestante),
+    Total is Precio + TotalRestante.    %Sumamos el precio del producto con el total restante
+
+%10) Calcular el total gastado por un cliente en una sucursal específica
+total_sucursal(Cliente, Sucursal, Total) :-  
+    compra(Cliente, Productos, Sucursal),
+    total_productos(Productos, Total).  %Usamos la regla total_productos del punto 9
+
+
+
+
+
+
+
