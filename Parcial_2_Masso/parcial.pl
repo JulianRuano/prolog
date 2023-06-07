@@ -84,30 +84,24 @@ listaProductoMujeres(ListaProductos) :-                              %Calculamos
     findall(Producto,                                                %Obtenemos una lista con los productos comprados por mujeres
         (compra(Cliente, Productos, _), mujer(Cliente), member(Producto, Productos)),
         ListaProductos).
-   
 
-   
+    %Determinar si un cliente ha comprado un producto específico
+compra_cliente(Cliente, Productos, Sucursal) :-
+    compra(Cliente, Productos, Sucursal).
 
+compro(Cliente, Producto) :-
+    compra_cliente(Cliente, Productos, _),
+    member(Producto, Productos).
 
+%9 explicar forall Determinar si un cliente ha comprado al menos un producto de cada categoría
+compro_todas_categorias(Cliente) :-
+    forall(categoria(Categoria), (compro(Cliente, Producto), producto(Producto, Categoria, _))).
 
+    %12 Obtener una lista de productos comprados en una categoría específica por un cliente
+    productos_categoria(Cliente, Categoria, ListaProductos) :-
+    findall(Producto, (compro(Cliente, Producto), producto(Producto, Categoria, _)), ListaProductos).
 
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    %hacer con el imprimir 13) Calcular el total gastado por un cliente en una categoría específica
+total_categoria(Cliente, Categoria, Total) :-
+    productos_categoria(Cliente, Categoria, ListaProductos),
+    total_productos(ListaProductos, Total).
