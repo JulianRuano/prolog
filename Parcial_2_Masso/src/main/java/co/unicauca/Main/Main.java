@@ -3,9 +3,10 @@
  */
 package co.unicauca.Main;
 
+import java.util.HashMap;
+import java.util.Scanner;
 import org.jpl7.Query;
 import org.jpl7.Term;
-import org.jpl7.Variable;
 
 /**
  *
@@ -24,30 +25,45 @@ public class Main {
         }
     }
     
+    public static void agregarHecho(String atomo1, String atomo2){
+             Query assertQuery = new Query("assertz", new Term[]{
+                new org.jpl7.Compound(atomo1, new Term[]{
+                        new org.jpl7.Atom(atomo2),
+                })
+        });
+        if (assertQuery.hasSolution()) {
+            System.out.println("Nuevo hecho agregado a la base de conocimiento.");
+        } else {
+            System.err.println("Error al agregar el nuevo hecho a la base de conocimiento.");
+        }
+    }
     
+    public static void MenuPrincipal(){
+       Scanner scanner = new Scanner(System.in);
+        OUTER:
+        while (true) {
+            System.out.println("\nMenú:");
+            System.out.println("1. Consultar precio total de una lista");
+            System.out.println("2. Salir");
+            System.out.print("Seleccione una opción: ");
+            int opcion = scanner.nextInt();
+            switch (opcion) {
+                case 1 -> {
+                       Consulta.calcularPrecioTotalListaProductos();            
+               }
+                case 2 -> {
+                    System.out.println("Saliendo...");
+                    break OUTER;
+               }
+                default -> System.out.println("Opción no válida. Intente nuevamente.");
+            }
+        }
+        scanner.close();
+    }
 
     public static void main(String[] args) {
         leerBaseConocimiento();
-        
-//            // Agregar un nuevo hecho a la base de conocimiento
-//        Query assertQuery = new Query("assertz", new Term[]{
-//                new org.jpl7.Compound("pelicula", new Term[]{
-//                        new org.jpl7.Atom("accion"),
-//                        new org.jpl7.Atom("Rapidos y furiosos sin control")
-//                })
-//        });
-//        if (assertQuery.hasSolution()) {
-//            System.out.println("Nuevo hecho agregado a la base de conocimiento.");
-//        } else {
-//            System.err.println("Error al agregar el nuevo hecho a la base de conocimiento.");
-//        }
-        Variable X = new Variable("X");
-        String generoBuscado = "accion";
-        Query peliculasPorGenero = new Query("pelicula", new Term[]{new org.jpl7.Atom(generoBuscado), X});
-        System.out.println("Películas de género " + generoBuscado + ":");
-        while (peliculasPorGenero.hasMoreSolutions()) {
-            System.out.println(peliculasPorGenero.nextSolution().get("X"));
-        }
+        MenuPrincipal();
     }
 
 }
