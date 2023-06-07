@@ -46,11 +46,13 @@ public class Main {
             System.out.println("2. Consultar precio total de una compra");
             System.out.println("3. Calcular ganancias de cada una de las sucursales");
             System.out.println("4. Calcular el precio total de los productos de una categoria ");
-//            System.out.println("4. ");
-//            System.out.println("4. ");
-//            System.out.println("4. ");
-//            System.out.println("4. ");
-//            System.out.println("4. ");
+           System.out.println("5. Mostrar los productos preferidos de las mujeres");
+           System.out.println("6. Determinar si un cliente ha comprado un producto específico ");
+           System.out.println("7. Saber si un cliente ha comprado un producto de cada categoria");
+            System.out.println("8. Obtener una lista de productos comprados en una categoría específica por un cliente ");
+            System.out.println("9. Obtener el total gastado por un cliente en una categoría específica ");
+
+
 //            System.out.println("4. ");
 //            System.out.println("4. ");
 //            System.out.println("4. ");
@@ -74,6 +76,18 @@ public class Main {
                 }
                 case 5->{
                     Consulta.productosPreferidosMujeres();
+                }
+                case 6->{
+                    Consulta.clienteComproProductoEspecifico();
+                }
+                case 7->{
+                    Consulta.clienteComproTodasCategorias();
+                }
+                case 8->{
+                    Consulta.listaProductosCompradosCategoriaCliente();
+                }
+                case 9->{
+                    Consulta.totalGastadoPorClienteEnCategoria();
                 }
                 case 15-> {
                     System.out.println("Saliendo...");

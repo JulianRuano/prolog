@@ -99,11 +99,127 @@ public class Consulta {
     }
 
     static void productosPreferidosMujeres() {
-        System.out.println("4. Calcular ganancias de cada una de las sucursales");
+        String consulta = "productoPreferidoMujeres()";
+        Query q = new Query(consulta);
+
+        if (q.hasNext()) {
+            String consultaProductos = "listaProductoMujeres(ListaProductos)";
+            Query qProductos = new Query(consultaProductos);
+
+            if (qProductos.hasNext()) {
+                Map<String, Term> resultado = qProductos.nextSolution();
+                Term[] listaProductosTerm = resultado.get("ListaProductos").toTermArray();
+                List<String> listaProductos = new ArrayList<>();
+
+                for (Term productoTerm : listaProductosTerm) {
+                    listaProductos.add(productoTerm.toString());
+                }
+
+                System.out.println("Productos preferidos por mujeres:");
+                for (String producto : listaProductos) {
+                    System.out.println(producto);
+                }
+            } else {
+                System.out.println("Error al obtener la lista de productos preferidos por mujeres.");
+            }
+        } else {
+            System.out.println("Error al calcular los productos preferidos por mujeres.");
+        }
+    }
+
+    static void clienteComproTodasCategorias(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Ingrese el nombre del cliente: ");
+        String nombreCliente = scanner.nextLine();
+
+        String consulta = String.format("compro_todas_categorias('%s')", nombreCliente);
+        Query q = new Query(consulta);
+        if(q.hasSolution()){
+            System.out.printf("El cliente %s ha comprado al menos un producto de cada categoría.\n", nombreCliente);
+        }else{
+            System.out.printf("El cliente %s no ha comprado al menos un producto de cada categoría.\n", nombreCliente);
+        }
+
     }
 
     public Consulta() {
 
     }
 
+     static void clienteComproProductoEspecifico() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Ingrese el nombre del cliente: ");
+        String nombreCliente = scanner.nextLine();
+        System.out.print("Ingrese el nombre del producto: ");
+        String nombreProducto = scanner.nextLine();
+
+         String consulta = String.format("compro('%s', '%s').", nombreCliente, nombreProducto);
+         Query query = new Query(consulta);
+
+         // Verificar si la consulta tiene solución
+         boolean resultado = query.hasSolution();
+
+         // Limpiar la consulta
+         query.close();
+
+         if (resultado) {
+             System.out.printf("El cliente %s ha comprado el producto %s.\n", nombreCliente, nombreProducto);
+         } else {
+             System.out.printf("El cliente %s no ha comprado el producto %s.\n", nombreCliente, nombreProducto);
+         }
+    }
+
+    public static void listaProductosCompradosCategoriaCliente() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Ingrese el nombre del cliente: ");
+        String nombreCliente = scanner.nextLine();
+        System.out.print("Ingrese el nombre de la categoría: ");
+        String nombreCategoria = scanner.nextLine();
+        List<String> productos = new ArrayList<>();
+        String consulta = String.format("productos_categoria('%s', '%s', ListaProductos).", nombreCliente, nombreCategoria);
+        Query query = new Query(consulta);
+
+        // Si la consulta tiene solución, extraer la lista de productos
+        if (query.hasNext()) {
+            Map<String, Term> solucion = query.nextSolution();
+            Term[] listaProductos = solucion.get("ListaProductos").toTermArray();
+
+            for (Term producto : listaProductos) {
+                productos.add(producto.toString());
+            }
+        }
+
+        productos.forEach(System.out::println);
+        // Limpiar la consulta
+        query.close();
+
+
+    }
+
+    public static void totalGastadoPorClienteEnCategoria() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Ingrese el nombre del cliente: ");
+        String nombreCliente = scanner.nextLine();
+        System.out.print("Ingrese el nombre de la categoría: ");
+        String nombreCategoria = scanner.nextLine();
+
+        String consulta = String.format(
+                "productos_categoria('%s', '%s', ListaProductos), total_productos(ListaProductos, Total).",
+                nombreCliente, nombreCategoria);
+        Query query = new Query(consulta);
+
+        // Si la consulta tiene solución, extraer y mostrar el total gastado
+        if (query.hasNext()) {
+            Map<String, Term> solucion = query.nextSolution();
+            String totalGastado = solucion.get("Total").toString();
+
+            System.out.printf("Total gastado por %s en la categoría %s: %s%n", nombreCliente, nombreCategoria, totalGastado);
+        } else {
+            System.out.printf("No se encontraron datos para el cliente %s en la categoría %s.%n", nombreCliente, nombreCategoria);
+        }
+
+        // Limpiar la consulta
+        query.close();
+
+    }
 }
