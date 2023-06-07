@@ -25,23 +25,56 @@ public class Main {
         }
     }
 
-    public static void agregarHecho(String atomo1, String atomo2) {
-        Query assertQuery = new Query("assertz", new Term[]{
-            new org.jpl7.Compound(atomo1, new Term[]{
-                new org.jpl7.Atom(atomo2),})
-        });
-        if (assertQuery.hasSolution()) {
-            System.out.println("Nuevo hecho agregado a la base de conocimiento.");
-        } else {
-            System.err.println("Error al agregar el nuevo hecho a la base de conocimiento.");
-        }
-    }
 
-    public static void MenuPrincipal() {
-        Scanner scanner = new Scanner(System.in);
-        OUTER:
-        while (true) {
-            System.out.println("\nMenú:");
+    static void menuBaseConocimiento(Scanner scanner) {
+
+        boolean continuar=true;
+        while(continuar){
+            System.out.println("\nMenú base de conocimiento:");
+            System.out.println("1. Agregar cliente");
+            System.out.println("2. Agregar categoria");
+            System.out.println("3. Agregar producto");
+            System.out.println("4. Agregar sucursal");
+            System.out.println("5. Agregar compra");
+            System.out.println("6. Salir");
+            System.out.print("Seleccione una opción: ");
+            int opcion = scanner.nextInt();
+
+            switch (opcion) {
+                case 1:
+                    BaseConocimiento.agregarCliente();
+                    break;
+
+                case 2:
+                    BaseConocimiento.agregarCategoria();
+                    break;
+
+                case 3:
+                    BaseConocimiento.agregarProducto();
+                    break;
+
+                case 4:
+                    BaseConocimiento.agregarSucursal();
+                    break;
+
+                case 5:
+                    BaseConocimiento.agregarCompra();
+                    break;
+
+                case 6:
+                    continuar = false;
+                    break;
+                default:
+                    System.out.println("Opción inválida");
+                    break;
+            }
+        };
+    }
+    public static void menuConsultas(Scanner scanner) {
+
+        boolean continuar = true;
+        while (continuar) {
+            System.out.println("\nMenú consultas:");
             System.out.println("1. Consultar precio total de una lista");
             System.out.println("2. Consultar precio total de una compra");
             System.out.println("3. Calcular ganancias de cada una de las sucursales");
@@ -51,14 +84,8 @@ public class Main {
            System.out.println("7. Saber si un cliente ha comprado un producto de cada categoria");
             System.out.println("8. Obtener una lista de productos comprados en una categoría específica por un cliente ");
             System.out.println("9. Obtener el total gastado por un cliente en una categoría específica ");
-
-
-//            System.out.println("4. ");
-//            System.out.println("4. ");
-//            System.out.println("4. ");
-//            System.out.println("4. ");
-//            System.out.println("4. ");
-            System.out.println("15. Salir");
+            System.out.println("10. Obtener el total gastado por un cliente en una sucursal específica ");
+            System.out.println("11. Salir");
             System.out.print("Seleccione una opción: ");
             int opcion = scanner.nextInt();
             switch (opcion) {
@@ -89,20 +116,61 @@ public class Main {
                 case 9->{
                     Consulta.totalGastadoPorClienteEnCategoria();
                 }
-                case 15-> {
+                case 10->{
+                    Consulta.totalGastadoPorClienteEnSucursal();
+                }
+                case 11-> {
                     System.out.println("Saliendo...");
-                    break OUTER;
+                    continuar = false;
+
                 }
                 default ->
                     System.out.println("Opción no válida. Intente nuevamente.");
             }
         }
-        scanner.close();
+
     }
 
+    static void menuPrincipal(Scanner scanner) {
+        int opcion=0;
+        boolean continuar = true;
+        while (continuar) {
+            System.out.println("\nMenú consultas:");
+            System.out.println("1. Consultar hechos");
+            System.out.println("2. Agregar hechos");
+            System.out.println("3. Salir");
+            System.out.print("Seleccione una opción: ");
+            opcion=scanner.nextInt();
+
+            switch (opcion) {
+                case 1: {
+                    menuConsultas(scanner);
+                    break;
+                }
+                case 2: {
+                    menuBaseConocimiento(scanner);
+                    break;
+                }
+                case 3:
+                    continuar = false;
+                    break;
+                default:
+                    System.out.println("Opción inválida");
+                    break;
+            }
+
+        }
+        ;
+    }
+
+
+
+
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         leerBaseConocimiento();
-        MenuPrincipal();
+        menuPrincipal(scanner);
+        scanner.close();
     }
 
 }

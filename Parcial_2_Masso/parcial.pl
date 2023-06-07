@@ -1,3 +1,10 @@
+% permite modificar la base del conocimiento en memoria usando el dynamic
+:- dynamic categoria/1.
+:- dynamic cliente/1.
+:- dynamic producto/3.
+:- dynamic sucursal/2.
+:- dynamic compra/3.
+
 %Hechos cliente
 mujer(maria).
 mujer(ana).
@@ -133,7 +140,7 @@ total_categoria(Cliente, Categoria, Total) :-
 %10) Calcular el total gastado por un cliente en una sucursal específica
 total_sucursal(Cliente, Sucursal, Total) :-  
     compra(Cliente, Productos, Sucursal),
-    total_productos(Productos, Total).  %Usamos la regla total_productos del punto 9
+    calcularPrecioTotal(Productos, Total).  %Usamos la regla total_productos del punto 1
 
 
 

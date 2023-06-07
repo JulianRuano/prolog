@@ -203,9 +203,8 @@ public class Consulta {
         System.out.print("Ingrese el nombre de la categoría: ");
         String nombreCategoria = scanner.nextLine();
 
-        String consulta = String.format(
-                "productos_categoria('%s', '%s', ListaProductos), total_productos(ListaProductos, Total).",
-                nombreCliente, nombreCategoria);
+        // Consulta Prolog para obtener el total gastado por el cliente en la categoría específica
+        String consulta = String.format("total_categoria('%s', '%s', Total).", nombreCliente, nombreCategoria);
         Query query = new Query(consulta);
 
         // Si la consulta tiene solución, extraer y mostrar el total gastado
@@ -220,6 +219,32 @@ public class Consulta {
 
         // Limpiar la consulta
         query.close();
+    }
 
+    public static void totalGastadoPorClienteEnSucursal() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Ingrese el nombre del cliente: ");
+        String nombreCliente = scanner.nextLine();
+        System.out.print("Ingrese el nombre de la sucursal: ");
+        String nombreSucursal = scanner.nextLine();
+
+
+
+        // Consulta Prolog para obtener el total gastado por el cliente en la sucursal específica
+        String consulta = String.format("total_sucursal('%s', '%s', Total).", nombreCliente, nombreSucursal);
+        Query query = new Query(consulta);
+
+        // Si la consulta tiene solución, extraer y mostrar el total gastado
+        if (query.hasNext()) {
+            Map<String, Term> solucion = query.nextSolution();
+            String totalGastado = solucion.get("Total").toString();
+
+            System.out.printf("Total gastado por %s en la sucursal %s: %s%n", nombreCliente, nombreSucursal, totalGastado);
+        } else {
+            System.out.printf("No se encontraron datos para el cliente %s en la sucursal %s.%n", nombreCliente, nombreSucursal);
+        }
+
+        // Limpiar la consulta
+        query.close();
     }
 }
