@@ -24,12 +24,11 @@ public class Main {
             System.out.println("El documento se ha cargado con exito");
         }
     }
-    
-    public static void agregarHecho(String atomo1, String atomo2){
-             Query assertQuery = new Query("assertz", new Term[]{
-                new org.jpl7.Compound(atomo1, new Term[]{
-                        new org.jpl7.Atom(atomo2),
-                })
+
+    public static void agregarHecho(String atomo1, String atomo2) {
+        Query assertQuery = new Query("assertz", new Term[]{
+            new org.jpl7.Compound(atomo1, new Term[]{
+                new org.jpl7.Atom(atomo2),})
         });
         if (assertQuery.hasSolution()) {
             System.out.println("Nuevo hecho agregado a la base de conocimiento.");
@@ -37,25 +36,51 @@ public class Main {
             System.err.println("Error al agregar el nuevo hecho a la base de conocimiento.");
         }
     }
-    
-    public static void MenuPrincipal(){
-       Scanner scanner = new Scanner(System.in);
+
+    public static void MenuPrincipal() {
+        Scanner scanner = new Scanner(System.in);
         OUTER:
         while (true) {
             System.out.println("\nMenú:");
             System.out.println("1. Consultar precio total de una lista");
-            System.out.println("2. Salir");
+            System.out.println("2. Consultar precio total de una compra");
+            System.out.println("3. Calcular ganancias de cada una de las sucursales");
+            System.out.println("4. Calcular el precio total de los productos de una categoria ");
+//            System.out.println("4. ");
+//            System.out.println("4. ");
+//            System.out.println("4. ");
+//            System.out.println("4. ");
+//            System.out.println("4. ");
+//            System.out.println("4. ");
+//            System.out.println("4. ");
+//            System.out.println("4. ");
+//            System.out.println("4. ");
+//            System.out.println("4. ");
+            System.out.println("15. Salir");
             System.out.print("Seleccione una opción: ");
             int opcion = scanner.nextInt();
             switch (opcion) {
                 case 1 -> {
-                       Consulta.calcularPrecioTotalListaProductos();            
-               }
+                    Consulta.calcularPrecioTotalListaProductos();
+                }
                 case 2 -> {
+                    Consulta.calcularPrecioCompra();
+                }
+                case 3 -> {
+                    Consulta.calcularGananciasSucursales();
+                }
+                case 4 -> {
+                    Consulta.calcularPrecioTotalCategoria();
+                }
+                case 5->{
+                    Consulta.productosPreferidosMujeres();
+                }
+                case 15-> {
                     System.out.println("Saliendo...");
                     break OUTER;
-               }
-                default -> System.out.println("Opción no válida. Intente nuevamente.");
+                }
+                default ->
+                    System.out.println("Opción no válida. Intente nuevamente.");
             }
         }
         scanner.close();
